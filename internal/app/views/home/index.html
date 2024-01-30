@@ -1,0 +1,48 @@
+{{ block "index" . }}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+  <title>huntermotko.dev</title>
+  <link rel="stylesheet" href="/css/out.css">
+</head>
+
+<body class="bg-gray-900">
+  <div class="h-screen">
+    {{ template "header" . }}
+    {{ template "main" . }}
+</body>
+
+</html>
+{{ end }}
+
+{{ block "main" . }}
+<main class="h-full mx-auto my-auto flex font-mono justify-center items-center text-teal-500">
+  <img class="rounded-lg" src="images/golf.png" alt="Personal Head Shot" height="300" width="300" />
+  <div class="mx-3 p-2">
+    <h1 class="text-5xl text-left my-2">
+      Hunter Motko
+    </h1>
+    <h2 class="text-3xl">
+      Software Engineer<br>
+      Terminal Lover<br />
+      Part Time Golf Cart Driver / Golf Ball Finder
+    </h2>
+    <div class="w-full flex items-center space-x-6 rtl:space-x-reverse">
+      <a class="" target="_blank" href="https://github.com/hunterMotko">
+        <img src="images/github.svg" alt="Github Icon" height="30" width="30">
+      </a>
+      <a class="" target="_blank" href="https://linkedin.com/in/hunter-motko">
+        <img src="images/linkedin.png" alt="LinkedIn Icon" height="40" width="40">
+      </a>
+      <a class="text-5xl" href="mailto:huntermotko@gmail.com">
+        📧
+      </a>
+    </div>
+  </div>
+</main>
+{{ end }}
