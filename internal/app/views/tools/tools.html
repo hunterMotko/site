@@ -12,10 +12,10 @@
 </head>
 
 <body class="bg-gray-900">
-  <div class="h-screen text-teal-500">
+  <div class="h-screen text-teal-500 container">
     {{ template "header" . }}
     <h1 class="text-4xl text-center my-5 py-3">The current tools that I Like</h1>
-    <section class="grid md:grid-cols-2 gap-3 md:gap-5">
+    <section class="grid md:grid-cols-2 gap-3 md:gap-5 p-2">
       <div class="mx-3">
         <h2 class="text-3xl">Terminal</h2>
         {{ range .Terminal }}
@@ -26,7 +26,7 @@
         </div>
         {{ end }}
       </div>
-      <div class="mx-2">
+      <div class="mx-2 p-2">
         <h2 class="text-3xl">Neovim</h2>
         {{ range .Neovim }}
         <div class="m-2 p-2 border-t">

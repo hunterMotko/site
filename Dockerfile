@@ -14,5 +14,3 @@ FROM ubuntu:18.04 AS release
 RUN apt-get update && apt-get install -y ca-certificates
 COPY --from=builder /site /site
 ENTRYPOINT ["/site"]
-
-

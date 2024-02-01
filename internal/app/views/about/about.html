@@ -31,6 +31,7 @@
         {{ template "experience" .ExperienceList }}
         {{ template "education" .EducationList }}
         {{ template "skills" .Skills }}
+        {{ template "orgs" .OrganizationList }}
       </section>
     </main>
   </div>
@@ -75,5 +76,18 @@
     </li>
     {{ end }}
   </ul>
+</div>
+{{ end }}
+{{ block "orgs" . }}
+<div class="w-full space-x-6 rtl:space-x-reverse">
+  <h1 class="text-3xl text-teal-500 p-3 mx-auto">Organizations</h1>
+  <div class="p-4 flex-col justify-center">
+    {{ range . }}
+      <a class="m-2 p-2 flex hover:underline" target="_blank" href="{{ .URL }}">
+        <img src="images/{{ .Image }}" alt="{{ .Name }}" height="50" width="50">
+        <h1 class="m-2 p-3 text-xl">{{ .Name }}</h1>
+      </a>
+    {{ end }}
+  </div>
 </div>
 {{ end }}

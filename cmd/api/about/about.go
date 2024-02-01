@@ -21,12 +21,13 @@ type Experience struct {
 }
 
 type About struct {
-	Intro          string
-	Body           string
-	Conclusion     string
-	EducationList  []Education
-	ExperienceList []Experience
-  Skills         SkillList
+	Intro            string
+	Body             string
+	Conclusion       string
+	EducationList    []Education
+	ExperienceList   []Experience
+	Skills           SkillList
+	OrganizationList []Organization
 }
 
 type Skill struct {
@@ -37,12 +38,10 @@ type Skill struct {
 type SkillList []Skill
 
 type Organization struct {
-  Name string
-  URL string
-  ImageName string
+	Name  string
+	URL   string
+	Image string
 }
-
-type OrganizationList []Organization
 
 func getEducation() []Education {
 	return []Education{
@@ -125,16 +124,16 @@ func getSkills() SkillList {
 	}
 }
 
-func getOrganizations() OrganizationList {
-  return OrganizationList{
-    {"Hack Reactor", "https://www.hackreactor.com/", ""},
-    {"Qwasar Silicon Valley", "https://www.qwasar.io/", ""},
-    {"Next Chapter", "https://www.nextchapterbk.com/", ""},
-    {"The Last Mile", "https://thelastmile.org/", ""},
-  }
+func getOrganizations() []Organization {
+	return []Organization{
+		{"Hack Reactor", "https://www.hackreactor.com/", "hr.svg"},
+		{"Qwasar Silicon Valley", "https://www.qwasar.io/", "qwasar.svg"},
+		{"Next Chapter", "https://www.nextchapterbk.com/", "nch.svg"},
+		{"The Last Mile", "https://thelastmile.org/", "tlm.svg"},
+	}
 }
 
-// GetAbout returns an About struct with Education and Experience slices
+// Intro, Body, Conclusion, EducationList, ExperienceList, Skills, OrganizationList
 func GetAbout() About {
 	return About{
 		Intro: `
@@ -158,8 +157,9 @@ I am proud to be associated with organizations such as Next Chapter and The Last
 which have provided me with valuable industry exposure and networking opportunities. 
 Additionally, my commitment to excellence has been recognized through the completion 
 of various certifications and qualifications.`,
-		EducationList:  getEducation(),
-		ExperienceList: getExperience(),
-    Skills:         getSkills(),
+		EducationList:    getEducation(),
+		ExperienceList:   getExperience(),
+		Skills:           getSkills(),
+		OrganizationList: getOrganizations(),
 	}
 }
