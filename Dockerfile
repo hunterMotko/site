@@ -1,15 +1,12 @@
-FROM golang:alpine AS build
-RUN apk --no-cache add gcc g++ make git
-WORKDIR /go/src/app
-COPY . .
-RUN go mod init webserver
-RUN go mod tidy
-RUN GOOS=linux go build -ldflags="-s -w" -o ./bin/web-app ./cmd/main.go
-
-FROM alpine:3.17
-RUN apk --no-cache add ca-certificates
-WORKDIR /usr/bin
-COPY --from=build /go/src/app/bin /go/bin
-EXPOSE 80
-ENTRYPOINT /go/bin/web-app --port 80
-
+# Official Golang image (You shouldn't use the `latest` version in production but I'm a bad guy)
+FROM golang:1.22rc2-bookworm
+# Working directory
+WORKDIR /app
+# Copy everything at /app
+COPY . /app
+# Build the go app
+RUN go build -o main ./cmd/main.go
+# Expose port
+EXPOSE 8080
+# Define the command to run the app
+CMD ["./main"]
