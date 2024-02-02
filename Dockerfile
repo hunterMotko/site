@@ -1,16 +1,15 @@
-FROM golang:1.22-rc-bookworm AS builder
-WORKDIR /app 
-COPY go.mod go.sum ./ 
-RUN go mod download
+FROM golang:alpine AS build
+RUN apk --no-cache add gcc g++ make git
+WORKDIR /go/src/app
+COPY . .
+RUN go mod init webserver
+RUN go mod tidy
+RUN GOOS=linux go build -ldflags="-s -w" -o ./bin/web-app ./cmd/main.go
 
-COPY *.go ./
+FROM alpine:3.17
+RUN apk --no-cache add ca-certificates
+WORKDIR /usr/bin
+COPY --from=build /go/src/app/bin /go/bin
+EXPOSE 80
+ENTRYPOINT /go/bin/web-app --port 80
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /site
-
-FROM builder AS test
-RUN go test -v ./...
-
-FROM ubuntu:18.04 AS release
-RUN apt-get update && apt-get install -y ca-certificates
-COPY --from=builder /site /site
-ENTRYPOINT ["/site"]

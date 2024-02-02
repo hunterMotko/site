@@ -17,7 +17,14 @@ type Server struct {
 }
 
 func NewServer() *http.Server {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
+  env := os.Getenv("APP_ENV")
+  var port int
+  if env == "development" {
+    port, _ = strconv.Atoi(os.Getenv("DP"))
+  } else {
+    port, _ = strconv.Atoi(os.Getenv("PP"))
+  }
+
 	NewServer := &Server{
 		port: port,
 		db:   database.New(),
