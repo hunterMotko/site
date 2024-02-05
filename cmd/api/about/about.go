@@ -74,8 +74,8 @@ func getExperience() []Experience {
 			Company:      "Remote",
 			Location:     "US",
 			LocationType: "Remote",
-			Start:        "2021",
-			End:          "2021",
+			Start:        "Feb 2023",
+			End:          "Jan 2024",
 			Description:  "Full stack development of http://ilpublicdefenderstats.org",
 		},
 		{
@@ -84,8 +84,8 @@ func getExperience() []Experience {
 			Company:      "Remote",
 			Location:     "US",
 			LocationType: "Remote",
-			Start:        "2021",
-			End:          "2021",
+			Start:        "June 2022",
+			End:          "Dec 2022",
 			Description:  "Collaborated with the development team to implement subscription and unsubscribe pages and systems. Utilizing Java, Vue.js, Apache, FTL (FreeMarker Template Language), and other relevant technologies to develop robust and user-friendly features.",
 		},
 		{
@@ -94,8 +94,8 @@ func getExperience() []Experience {
 			Company:      "Remote",
 			Location:     "US",
 			LocationType: "Remote",
-			Start:        "2021",
-			End:          "2021",
+			Start:        "Sep 2021",
+			End:          "Mar 2022",
 			Description:  "Utilized proficiency in frontend technologies like HTML, CSS, JavaScript, and React to collaborate with design teams, ensuring the development of a user-friendly and efficient messaging interface.",
 		},
 	}
