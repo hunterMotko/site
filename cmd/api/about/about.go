@@ -1,7 +1,5 @@
 package about
 
-import ()
-
 type Education struct {
 	School string
 	Title  string
@@ -26,21 +24,6 @@ type About struct {
 	Conclusion       string
 	EducationList    []Education
 	ExperienceList   []Experience
-	Skills           SkillList
-	OrganizationList []Organization
-}
-
-type Skill struct {
-	Name  string
-	Level int
-}
-
-type SkillList []Skill
-
-type Organization struct {
-	Name  string
-	URL   string
-	Image string
 }
 
 func getEducation() []Education {
@@ -48,19 +31,19 @@ func getEducation() []Education {
 		{
 			School: "Hack Reactor",
 			Title:  "Full Stack Engineering",
-			To:     "2021",
-			From:   "2020",
+			To:     "2022",
+			From:   "2022",
 		},
 		{
 			School: "Qwasar Silicon Valley",
 			Title:  "Full Stack Development, Computer Software Engineering",
-			To:     "2020",
-			From:   "2019",
+			To:     "2022",
+			From:   "2021",
 		},
 		{
 			School: "The Last Mile",
 			Title:  "Full Stack Development",
-			To:     "2019",
+			To:     "2021",
 			From:   "2018",
 		},
 	}
@@ -101,43 +84,11 @@ func getExperience() []Experience {
 	}
 }
 
-func getSkills() SkillList {
-	return SkillList{
-		{"JavaScript", 10},
-		{"React", 10},
-		{"Golang", 7},
-		{"POSIX", 7},
-		{"Ruby", 8},
-		{"Ruby on Rails", 8},
-		{"PostgreSQL", 9},
-		{"MySql", 9},
-		{"MongoDB", 8},
-		{"DynamoDB", 7},
-		{"Vue", 6},
-		{"HTML", 10},
-		{"CSS", 9},
-		{"CI/CD", 5},
-		{"Docker", 6},
-		{"Java", 5},
-		{"C", 4},
-		{"Git", 8},
-	}
-}
-
-func getOrganizations() []Organization {
-	return []Organization{
-		{"Hack Reactor", "https://www.hackreactor.com/", "hr.svg"},
-		{"Qwasar Silicon Valley", "https://www.qwasar.io/", "qwasar.svg"},
-		{"Next Chapter", "https://www.nextchapterbk.com/", "nch.svg"},
-		{"The Last Mile", "https://thelastmile.org/", "tlm.svg"},
-	}
-}
-
 // Intro, Body, Conclusion, EducationList, ExperienceList, Skills, OrganizationList
 func GetAbout() About {
 	return About{
 		Intro: `
-Hello, my name is Hunter and I am a Software Engineer with a passion for creating innovative web applications, 
+I am a Software Engineer with a passion for creating innovative web applications, 
 command line interfaces, VIM, and solving real world problems. 
 With a strong foundation in technologies such as 
 React, Next.js, Node.js, Ruby, Ruby on Rails, Golang, Postgresql, MongoDB, and DynamoDB, 
@@ -159,7 +110,5 @@ Additionally, my commitment to excellence has been recognized through the comple
 of various certifications and qualifications.`,
 		EducationList:    getEducation(),
 		ExperienceList:   getExperience(),
-		Skills:           getSkills(),
-		OrganizationList: getOrganizations(),
 	}
 }

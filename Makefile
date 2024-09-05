@@ -1,5 +1,5 @@
 BINARY_NAME=app
-SOURCES=$(wildcard *.go)
+SOURCES=$(wildcard ./cmd/main.go)
 
 build: $(SOURCES)
 	go build -o $(BINARY_NAME) $(SOURCES)

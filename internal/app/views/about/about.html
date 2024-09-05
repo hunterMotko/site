@@ -11,83 +11,66 @@
   <link rel="stylesheet" href="/css/out.css">
 </head>
 
-<body class="bg-slate-900 font-mono">
-  <div class="h-screen text-teal-500">
+<body>
+  <div class="h-full bg-zinc-800 font-mono text-white">
     {{ template "header" . }}
-    <h1 class="text-5xl pl-3 m-4">About Me</h1>
-    <main class="ml-3">
-      <section class="p-3 mx-auto">
-        <p class="m-1">
-          {{ .Intro }}
-        </p>
-        <p class="m-1">
-          {{ .Body }}
-        </p>
-        <p class="m-1">
-          {{ .Conclusion }}
-        </p>
+    <main class="p-3">
+      <section class="flex justify-between my-3">
+        <div class="text-2xl hidden md:block">WHOAMI(1)</div>
+        <div class="text-2xl">General About Manual</div>
+        <div class="text-2xl">WHOAMI(1)</div>
       </section>
-      <section class="grid md:grid-cols-2 gap-3 md:gap-5">
-        {{ template "experience" .ExperienceList }}
-        {{ template "education" .EducationList }}
-        {{ template "skills" .Skills }}
-        {{ template "orgs" .OrganizationList }}
+      <section class="my-3">
+        <h1 class="text-xl">NAME</h1>
+        <h2 class="ml-5">Hunter Motko</h2>
+      </section>
+      <section class="my-3">
+        <h1 class="text-xl">SYNOPSIS</h1>
+        <h2 class="ml-5">Full Stack Software Engineer</h2>
+      </section>
+      <section>
+        <h1 class="text-xl">DESCRIPTION</h1>
+        <p class="ml-5">{{ .Intro }}</p>
+        <p class="ml-5 my-2">{{ .Body }}</p>
+        <p class="ml-5">{{ .Conclusion }}</p>
+      </section>
+      {{ template "experience" .ExperienceList }}
+      {{ template "education" .EducationList }}
+      <section class="flex justify-between my-3">
+        <div class="text-2xl hidden md:block">ubuntu</div>
+        <div class="text-2xl">September 03, 2024</div>
+        <div class="text-2xl">ubuntu</div>
       </section>
     </main>
+    {{ template "footer" . }}
   </div>
 </body>
 
 </html>
 {{ end }}
+
 {{ block "experience" . }}
-<div class="text-teal-500 p-3 mx-auto">
-  <h1 class="text-3xl">Experience</h1>
+<section class="my-3">
+  <h1 class="text-xl">EXPERIENCE</h1>
   {{ range . }}
-  <div class="my-2 mx-1 p-1 border-t">
-    <h2 class="text-xl">{{ .Title }} - {{.Employment }}</h2>
+  <div class="ml-5 mb-2">
+    <h2 class="">{{ .Title }} - {{.Employment }}</h2>
     <h4 class="">{{ .Location }}, {{ .LocationType }} <i>{{ .Start }} - {{ .End }}</i></h4>
-    <div class="">{{ .Description }}</div>
+    <p class="">{{ .Description }}</p>
   </div>
   {{ end}}
-</div>
+</section>
 {{ end }}
+
 {{ block "education" . }}
-<div class="text-teal-500 p-3 mx-auto">
-  <h1 class="text-3xl">Education</h1>
+<section class="my-3">
+  <h1 class="text-xl">EDUCATION</h1>
   {{ range . }}
-  <div class="my-2 mx-1 p-1 border-t">
+  <div class="ml-5 mb-2">
     <h2>{{ .School }}</h2>
     <h3>{{ .Title }}</h3>
-    <h5>{{ .To }} - {{ .From }}</h5>
+    <h5>{{ .From }} - {{ .To }}</h5>
   </div>
   {{ end }}
-</div>
-{{ end }}
-{{ block "skills" . }}
-<div class="w-full text-teal-500 p-3 mx-auto">
-  <h1 class="text-3xl">Skills</h1>
-  <ul class="">
-    {{ range . }}
-    <li class="flex justify-between">
-      <h3>{{ .Name }}</h3>
-      <div class="w-3/5 bg-gray-700 rounded-full h-3">
-        <div class="bg-blue-600 h-3 rounded-full" style="width: calc({{ .Level }} * 10%);" />
-      </div>
-    </li>
-    {{ end }}
-  </ul>
-</div>
-{{ end }}
-{{ block "orgs" . }}
-<div class="w-full space-x-6 rtl:space-x-reverse">
-  <h1 class="text-3xl text-teal-500 p-3 mx-auto">Organizations</h1>
-  <div class="p-4 flex-col justify-center">
-    {{ range . }}
-      <a class="m-2 p-2 flex hover:underline" target="_blank" href="{{ .URL }}">
-        <img src="images/{{ .Image }}" alt="{{ .Name }}" height="50" width="50">
-        <h1 class="m-2 p-3 text-xl">{{ .Name }}</h1>
-      </a>
-    {{ end }}
-  </div>
-</div>
+</section>
 {{ end }}

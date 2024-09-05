@@ -1,0 +1,48 @@
+{{ block "resources" . }}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+  <title>huntermotko.dev</title>
+  <link rel="stylesheet" href="/css/out.css">
+</head>
+
+<body>
+  <div class="h-full bg-zinc-800 font-mono text-white">
+    {{ template "header" . }}
+    <main class="p-3">
+      <section class="flex justify-between my-3">
+        <div class="text-2xl hidden md:block">RESOURCES(1)</div>
+        <div class="text-2xl">General Resource Manual</div>
+        <div class="text-2xl hidden md:block">RESOURCES(1)</div>
+      </section>
+      <section class="my-3">
+        <h1 class="text-xl">SYNOPSIS</h1>
+        <h2 class="ml-5">[Common resource]: [open source alternatives [link]]</h2>
+      </section>
+      <section class="my-3">
+        <h1 class="text-xl">OPEN SOURCE ALTERNATIVES</h1>
+        <ul class="ml-5">
+          {{ range .Alts }}
+          <li class="grid grid-cols-2">
+            <h1>{{ .Alt }}</h1> <a class="hover:underline" href="{{ .Href }}">{{ .Open }}</a>
+          </li>
+          {{ end }}
+        </ul>
+      </section>
+      <section class="flex justify-between my-3">
+        <div class="text-2xl hidden md:block">ubuntu</div>
+        <div class="text-2xl">September 03, 2024</div>
+        <div class="text-2xl">ubuntu</div>
+      </section>
+    </main>
+    {{ template "footer" . }}
+  </div>
+</body>
+
+</html>
+{{ end }}
