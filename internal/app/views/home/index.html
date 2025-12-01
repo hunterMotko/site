@@ -9,17 +9,12 @@
   <meta name="keywords" content="hunter,motko,profile">
   <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
   <title>Hunter Motko</title>
-  <link rel="stylesheet" href="/css/out.css">
+  <link rel="stylesheet" href="/css/index.css">
 </head>
-<body class="bg-zinc-800">
-  <div class="h-full font-mono">
-    {{ template "header" . }}
-    <div class="w-full mx-auto my-10 py-10 flex justify-center flex-wrap">
-      <pre class="text-white text-sm">{{ .First }}</pre>
-      <pre class="text-white text-sm">{{ .Last }}</pre>
-    </div>
+<body>
+  <div class="container">
+		{{ template "navbar" . }}
     {{ template "main" . }}
-    {{ template "footer" . }}
   </div>
 </body>
 </html>

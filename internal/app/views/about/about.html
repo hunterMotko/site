@@ -1,77 +1,57 @@
 {{ block "about" . }}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="hunter motko about page">
-  <meta name="keywords" content="hunter,motko,about">
+  <meta name="description" content="hunter motko profile page">
+  <meta name="keywords" content="hunter,motko,profile">
   <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
-  <title>About Hunter Motko</title>
-  <link rel="stylesheet" href="/css/out.css">
+  <title>Hunter Motko</title>
+  <link rel="stylesheet" href="/css/index.css">
 </head>
-
 <body>
-  <div class="h-full bg-zinc-800 font-mono text-white">
-    {{ template "header" . }}
-    <main class="p-3">
-      <section class="flex justify-between my-3">
-        <div class="text-2xl hidden md:block">WHOAMI(1)</div>
-        <div class="text-2xl">General About Manual</div>
-        <div class="text-2xl">WHOAMI(1)</div>
-      </section>
-      <section class="my-3">
-        <h1 class="text-xl">NAME</h1>
-        <h2 class="ml-5">Hunter Motko</h2>
-      </section>
-      <section class="my-3">
-        <h1 class="text-xl">SYNOPSIS</h1>
-        <h2 class="ml-5">Full Stack Software Engineer</h2>
-      </section>
-      <section>
-        <h1 class="text-xl">DESCRIPTION</h1>
-        <p class="ml-5">{{ .Intro }}</p>
-        <p class="ml-5 my-2">{{ .Body }}</p>
-        <p class="ml-5">{{ .Conclusion }}</p>
+		{{ template "navbar" . }}
+    <main class="about-main">
+      <section class="summary">
+        <h1 class="summary-title">Summary</h1>
+        <p class="">{{ .Summary }}</p>
       </section>
       {{ template "experience" .ExperienceList }}
       {{ template "education" .EducationList }}
-      <section class="flex justify-between my-3">
-        <div class="text-2xl hidden md:block">ubuntu</div>
-        <div class="text-2xl">September 03, 2024</div>
-        <div class="text-2xl">ubuntu</div>
-      </section>
     </main>
-    {{ template "footer" . }}
-  </div>
 </body>
-
 </html>
 {{ end }}
 
 {{ block "experience" . }}
-<section class="my-3">
-  <h1 class="text-xl">EXPERIENCE</h1>
+<section class="experience">
+  <h1 class="">Experience</h1>
   {{ range . }}
-  <div class="ml-5 mb-2">
-    <h2 class="">{{ .Title }} - {{.Employment }}</h2>
-    <h4 class="">{{ .Location }}, {{ .LocationType }} <i>{{ .Start }} - {{ .End }}</i></h4>
-    <p class="">{{ .Description }}</p>
+  <div class="experience-block">
+    <h2 class="position">{{ .Title }} - {{.Employment }}</h2>
+    <h4 class="specs">{{ .Location }}, {{ .LocationType }} - <i>{{ .Start }} - {{ .End }}</i></h4>
+		<ul class="ex-desc">
+		{{ range .Description }}
+			<li>
+				{{ . }}
+			</li>
+		{{ end }}
+		</ul>
   </div>
   {{ end}}
 </section>
 {{ end }}
 
 {{ block "education" . }}
-<section class="my-3">
-  <h1 class="text-xl">EDUCATION</h1>
+<section class="education">
+  <h1 class="">Education</h1>
   {{ range . }}
-  <div class="ml-5 mb-2">
-    <h2>{{ .School }}</h2>
-    <h3>{{ .Title }}</h3>
-    <h5>{{ .From }} - {{ .To }}</h5>
+  <div class="ed-block">
+    <h2 class="position">{{ .School }}</h2>
+		<h3 class="specs">{{ .Title }} <i>{{ .From }} - {{ .To }}</i></h3>
+		<p>{{ .Description }}</p>
   </div>
   {{ end }}
 </section>

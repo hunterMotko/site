@@ -7,27 +7,24 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/huntermotko/site/internal/database"
 	_ "github.com/joho/godotenv/autoload"
 )
 
 type Server struct {
 	port int
-	db   database.Service
 }
 
 func NewServer() *http.Server {
-  env := os.Getenv("APP_ENV")
-  var port int
-  if env == "development" {
-    port, _ = strconv.Atoi(os.Getenv("DP"))
-  } else {
-    port, _ = strconv.Atoi(os.Getenv("PP"))
-  }
+	env := os.Getenv("APP_ENV")
+	var port int
+	if env == "development" {
+		port, _ = strconv.Atoi(os.Getenv("DP"))
+	} else {
+		port, _ = strconv.Atoi(os.Getenv("PP"))
+	}
 
 	NewServer := &Server{
 		port: port,
-		db:   database.New(),
 	}
 
 	// Declare Server config

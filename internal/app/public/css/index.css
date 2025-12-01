@@ -1,3 +1,164 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+	--color-bg-dark: #27272a;
+	--color-bg-darker: #1f2937;
+	--color-text-primary: #ffffff;
+	--color-text-secondary: #d1d5db;
+	--color-border: #374151;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	background-color: var(--color-bg-darker);
+	color: var(--color-text-primary);
+	font-family: 'Monaco', 'Courier New', monospace;
+}
+
+p {
+	text-indent: 2rem;
+}
+
+.container {
+	height: 100%;
+}
+
+/* === Navbar === */
+.navbar {
+	background-color: var(--color-bg-darker);
+}
+
+.navlinks {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	list-style: none;
+	padding: 15px;
+}
+
+.navlink {
+	color: white;
+	margin: 0 15px;
+	text-decoration: none;
+}
+
+.navlink:hover {
+	text-decoration: underline;
+}
+
+/* === Home Page === */
+.main {
+	height: 90%;
+	margin: auto 1em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.headshot {
+	border-radius: 10px;
+}
+
+.inner-container {
+	margin: 1rem;
+	padding: 1rem;
+}
+
+.name-title {
+	font-size: 32px;
+}
+
+.position-title {
+	font-size: 28px;
+}
+
+.socials {
+	width: 50%;
+	display: flex;
+	margin: 1rem 0;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.icon {
+	font-size: 24px;
+	margin: 0 15px 0 0;
+	transition: filter 0.3s ease;
+	transition: scale 0.3s ease;
+}
+
+.icon:hover {
+	filter: drop-shadow(5px 5px 5px gray);
+	scale: 1.1;
+}
+
+/* === About Page === */
+.about-main {
+	height: 100%;
+	width: 80%;
+	margin: 1em auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+@media (max-width: 400px) {
+	.about-main {
+		width: 100%;
+		height: 100%;
+		margin: 1em 0;
+		padding: 0 5px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+}
+
+.summary {
+	margin: 1rem 0;
+}
+
+.summary-title {
+	font-size: 32px;
+	margin: 5px 0;
+}
+
+.experience {
+	margin: 10px 0;
+}
+
+.experience-block {
+	margin: 10px 0;
+}
+
+.position {
+	margin: 5px 0;
+}
+
+.specs {
+	margin: 5px 0;
+}
+
+.ex-desc {
+	padding: 15px;
+}
+
+.education {
+	width: 100%;
+}
+
+.ed-block {
+	margin: 10px 0;
+}
