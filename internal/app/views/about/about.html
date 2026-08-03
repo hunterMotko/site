@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="hunter motko profile page">
-  <meta name="keywords" content="hunter,motko,profile">
+  <meta name="description"
+    content="Hunter Motko — platform and data engineering. Ingestion pipelines, APIs, and the deployment around them. Go, Python, Postgres.">
+  <meta name="keywords" content="platform engineering,data engineering,go,python,postgres,remote">
   <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
   <title>Hunter Motko</title>
   <link rel="stylesheet" href="/css/index.css">
@@ -14,12 +15,52 @@
 <body>
 		{{ template "navbar" . }}
     <main class="about-main">
-      <section class="summary">
-        <h1 class="summary-title">Summary</h1>
-        <p class="">{{ .Summary }}</p>
+      <section class="positioning">
+        <h1 class="positioning-line">{{ .Positioning }}</h1>
+        <p class="focus">{{ .Focus }}</p>
       </section>
+
+      <section class="proof">
+        {{ range .Proof }}
+        <div class="proof-block">
+          <h2 class="proof-claim">{{ .Claim }}</h2>
+          <p class="proof-context">{{ .Context }}</p>
+        </div>
+        {{ end }}
+      </section>
+
+      <section class="building">
+        <h2 class="section-title">What I'm building now</h2>
+        <p>{{ .Building }}</p>
+      </section>
+
+      <section class="story">
+        <h2 class="section-title">How I got here</h2>
+        <p>{{ .Story }}</p>
+        <ul class="orgs">
+          {{ range .Orgs }}
+          <li class="org">
+            <a target="_blank" rel="noopener" href="{{ .Href }}">
+              <img class="org-logo" src="{{ .Logo }}" alt="{{ .Name }}" height="48" width="48">
+            </a>
+            <div class="org-text">
+              <a class="org-name" target="_blank" rel="noopener" href="{{ .Href }}">{{ .Name }}</a>
+              <span class="org-blurb">{{ .Blurb }}</span>
+            </div>
+          </li>
+          {{ end }}
+        </ul>
+      </section>
+
       {{ template "experience" .ExperienceList }}
       {{ template "education" .EducationList }}
+
+      <section class="stack">
+        <h2 class="section-title">Stack</h2>
+        <ul class="stack-list">
+          {{ range .Stack }}<li>{{ . }}</li>{{ end }}
+        </ul>
+      </section>
     </main>
 </body>
 </html>

@@ -38,7 +38,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e.Renderer = newTemplate()
 	e.GET("/", s.Home)
 	e.GET("/about", s.About)
-	e.Logger.Fatal(e.Start(":8080"))
+
+	// Return the handler rather than calling e.Start(). Starting Echo's own
+	// server here would block forever, so the *http.Server configured in
+	// NewServer() — and its read/write/idle timeouts — would never be used.
 	return e
 }
 

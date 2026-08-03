@@ -19,8 +19,36 @@ type Experience struct {
 	Description  []string
 }
 
+// Proof is a single piece of evidence, stated as a claim with the context
+// that backs it. These lead the page — the reader should hit concrete
+// results before job titles or a technology list.
+type Proof struct {
+	Claim   string
+	Context string
+}
+
+// Org is a program worth naming rather than leaving as an unlabeled logo.
+type Org struct {
+	Name  string
+	Href  string
+	Logo  string
+	Blurb string
+}
+
 type About struct {
-	Summary        string
+	// Positioning is the opening line: what the work is and who it is for.
+	// Deliberately not a job title — "Full Stack Software Engineer" is the
+	// most contested phrase in the market and invites comparison on years
+	// of experience, the weakest available axis.
+	Positioning string
+	Focus       string
+	Proof       []Proof
+	Building    string
+	Story       string
+	Orgs        []Org
+	// Stack sits last, as a footnote. A technology list is a keyword filter
+	// that screens people out more often than it draws them in.
+	Stack          []string
 	EducationList  []Education
 	ExperienceList []Experience
 }
@@ -98,10 +126,83 @@ func getExperience() []Experience {
 	}
 }
 
+func getProof() []Proof {
+	return []Proof{
+		{
+			Claim: "Built ingestion for messy, high-volume data without losing records",
+			Context: "Bulk packet data arriving with polymorphic structures and a long tail of " +
+				"edge cases. Wrote the processing logic that kept it consistent, and the " +
+				"offline-first sync that queued writes through network loss and reconciled " +
+				"them on reconnect.",
+		},
+		{
+			Claim: "Cut page load times 50% by fixing the database, not the frontend",
+			Context: "Indexing and query tuning against Postgres under high-volume transactional " +
+				"load. The frontend numbers — 50% faster loads, 40% faster case handling — " +
+				"came out of the storage layer.",
+		},
+		{
+			Claim: "Own the path from commit to running service",
+			Context: "GitHub Actions CI/CD and Dockerized deploys on DigitalOcean. Not handed " +
+				"off to someone else's platform team.",
+		},
+	}
+}
+
+func getOrgs() []Org {
+	return []Org{
+		{
+			Name:  "The Last Mile",
+			Href:  "https://www.thelastmile.org/",
+			Logo:  "images/tlm.svg",
+			Blurb: "Software engineering education inside correctional facilities.",
+		},
+		{
+			Name:  "The Next Chapter",
+			Href:  "https://www.nextchapterbk.com/",
+			Logo:  "images/nch.svg",
+			Blurb: "Apprenticeships for engineers reentering the workforce.",
+		},
+		{
+			Name:  "Hack Reactor",
+			Href:  "https://www.hackreactor.com/",
+			Logo:  "images/hr.svg",
+			Blurb: "19-week advanced full-stack immersive.",
+		},
+		{
+			Name:  "Qwasar Silicon Valley",
+			Href:  "https://www.qwasar.io/",
+			Logo:  "images/qwasar.svg",
+			Blurb: "Project-based systems and algorithms program.",
+		},
+	}
+}
+
 func GetAbout() About {
 	return About{
-		Summary: `
-I am a Full Stack Software Engineer with three years of professional experience and a strong foundation in full-stack development. My expertise spans React.js, Vue.js, Next.js, Node.js, Golang, and Java, supported by robust database skills in Postgresql and MongoDB. A graduate of Hack Reactor, Qwasar Silicon Valley, and The Last Mile, I have successfully delivered complex projects—from admin panels to production-ready websites—focusing on scalable architecture and seamless CI/CD integration.`,
+		Positioning: "I build the data infrastructure other systems run on.",
+		Focus: `Ingestion pipelines, the APIs that serve them, and the deployment and
+observability around both. Go and Python, Postgres, Docker. Working remote with teams
+anywhere in the US.`,
+		Proof: getProof(),
+		Building: `Currently building a self-hosted market data platform — a Go service
+ingesting federal economic data into Postgres and serving it over a documented API, with
+migrations, rate limiting, and source-licensing constraints enforced at the query layer.
+It runs at effectively zero cost on a single droplet.`,
+		// NOTE: this paragraph is a starting draft. It is the most personal
+		// thing on the site and should be rewritten in Hunter's own words
+		// before this page goes in front of anyone.
+		Story: `I came into this field through The Last Mile and The Next Chapter, then
+Qwasar and Hack Reactor. That route selects hard for the part of engineering that is
+mostly persistence — reading unfamiliar systems until they make sense, and staying with a
+problem after the interesting part is over. Most of what I do now is that.`,
+		Orgs: getOrgs(),
+		Stack: []string{
+			"Go", "Python", "Java", "TypeScript",
+			"Postgres", "SQLite", "MongoDB",
+			"Docker", "GitHub Actions", "DigitalOcean",
+			"React", "Vue", "Next.js", "Node",
+		},
 		EducationList:  getEducation(),
 		ExperienceList: getExperience(),
 	}
