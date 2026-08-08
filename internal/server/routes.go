@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"io"
 	"io/fs"
+	"log"
 	"net/http"
 	"os"
 
@@ -102,10 +103,24 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// than per request: the file does not appear while the process is running,
 	// and a stat on every request to decide whether to render a link is a
 	// syscall for nothing.
+	// The check is deliberately stricter than "os.Stat succeeds". Docker creates
+	// an empty *directory* at a bind-mount point whose host source is missing,
+	// and a directory satisfies a bare nil-error check — which would register
+	// the route, render the download link, and then 404, the exact failure this
+	// conditional exists to prevent. A zero-byte file fails for the same reason:
+	// a résumé that downloads as 0 bytes is worse than no link at all.
 	if s.cfg.ResumePath != "" {
-		if _, err := os.Stat(s.cfg.ResumePath); err == nil {
+		switch info, err := os.Stat(s.cfg.ResumePath); {
+		case err != nil:
+			log.Printf("/resume.pdf: not served (%v)", err)
+		case info.IsDir():
+			log.Printf("/resume.pdf: not served (%s is a directory — a bind mount whose host source is missing?)", s.cfg.ResumePath)
+		case info.Size() == 0:
+			log.Printf("/resume.pdf: not served (%s is empty)", s.cfg.ResumePath)
+		default:
 			s.hasResume = true
 			e.File("/resume.pdf", s.cfg.ResumePath)
+			log.Printf("/resume.pdf: serving %s (%d bytes)", s.cfg.ResumePath, info.Size())
 		}
 	}
 

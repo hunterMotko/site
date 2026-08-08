@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
@@ -138,6 +140,58 @@ func TestResumeLinkTracksTheFile(t *testing.T) {
 	}
 	if strings.Contains(get(t, h, "/").Body.String(), "/resume.pdf") {
 		t.Error("home page advertises /resume.pdf while the route is unregistered")
+	}
+}
+
+// TestResumeRejectsNonFiles: Docker creates an empty *directory* at a bind-mount
+// point whose host source is missing, and a directory satisfies a bare
+// os.Stat-succeeds check — which would render the download link and then 404.
+func TestResumeRejectsNonFiles(t *testing.T) {
+	dir := t.TempDir()
+
+	realPDF := filepath.Join(dir, "real.pdf")
+	if err := os.WriteFile(realPDF, []byte("%PDF-1.4 not really"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	emptyPDF := filepath.Join(dir, "empty.pdf")
+	if err := os.WriteFile(emptyPDF, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	dirPDF := filepath.Join(dir, "adirectory.pdf")
+	if err := os.Mkdir(dirPDF, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name   string
+		path   string
+		served bool
+	}{
+		{name: "real file is served", path: realPDF, served: true},
+		{name: "directory is refused", path: dirPDF},
+		{name: "empty file is refused", path: emptyPDF},
+		{name: "missing path is refused", path: filepath.Join(dir, "nope.pdf")},
+		{name: "unset is refused", path: ""},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			h := (&Server{cfg: Config{ResumePath: tc.path}}).RegisterRoutes()
+
+			wantCode := http.StatusNotFound
+			if tc.served {
+				wantCode = http.StatusOK
+			}
+			if got := get(t, h, "/resume.pdf").Code; got != wantCode {
+				t.Errorf("GET /resume.pdf = %d, want %d", got, wantCode)
+			}
+
+			// The link and the route must never disagree.
+			linked := strings.Contains(get(t, h, "/").Body.String(), "/resume.pdf")
+			if linked != tc.served {
+				t.Errorf("home page links résumé = %v, want %v", linked, tc.served)
+			}
+		})
 	}
 }
 

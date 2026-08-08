@@ -28,7 +28,16 @@ services:
       # The résumé is deliberately not in git (a public repo would retain every
       # draft forever) and therefore not in the image either. Mounted read-only:
       # the app serves it and has no business writing to it.
-      - /srv/site/resume.pdf:/srv/resume.pdf:ro
+      #
+      # Path is relative to this file, so `docker compose up` works the same on
+      # a laptop as on the droplet — drop resume.pdf beside compose.yaml. It
+      # stays out of git via the *.pdf rule in .gitignore.
+      #
+      # If resume.pdf is absent, Docker creates an empty directory here rather
+      # than failing. The server checks for a non-empty regular file and simply
+      # does not register the route, so the missing file costs you the download
+      # link and nothing else.
+      - ./resume.pdf:/srv/resume.pdf:ro
 
 volumes:
   metrics:
