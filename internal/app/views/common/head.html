@@ -1,0 +1,37 @@
+{{ block "head" . }}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ .Title }}</title>
+<meta name="description" content="{{ .Description }}">
+<meta name="author" content="Hunter Motko">
+
+{{ if .CanonicalURL }}<link rel="canonical" href="{{ .CanonicalURL }}">{{ end }}
+
+<!-- Open Graph. Without these a link pasted into Slack, LinkedIn, or iMessage
+     renders as a bare URL — which is exactly how this site gets shared. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hunter Motko">
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:description" content="{{ .Description }}">
+{{ if .CanonicalURL }}<meta property="og:url" content="{{ .CanonicalURL }}">{{ end }}
+{{ if .OGImage }}<meta property="og:image" content="{{ .OGImage }}">
+<meta property="og:image:alt" content="Hunter Motko">{{ end }}
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{ .Title }}">
+<meta name="twitter:description" content="{{ .Description }}">
+{{ if .OGImage }}<meta name="twitter:image" content="{{ .OGImage }}">{{ end }}
+
+<link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/favicon.svg">
+<link rel="stylesheet" href="/css/index.css">
+
+{{ if .JSONLD }}<script type="application/ld+json">{{ .JSONLD }}</script>{{ end }}
+
+<!-- htmx is self-hosted at a pinned version rather than pulled from a CDN.
+     The previous unpkg.com/htmx.org/dist/htmx.js had no version in the URL, so
+     it silently tracked whatever was published most recently, and served the
+     unminified build. -->
+<script src="/js/htmx.min.js" defer></script>
+{{ if .Dev }}<script src="/js/script.js" defer></script>{{ end }}
+{{ end }}

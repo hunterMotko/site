@@ -1,11 +1,15 @@
 {{ block "navbar" . }}
-<nav class="navbar">
+<a class="skip-link" href="#main">Skip to content</a>
+<nav class="navbar" aria-label="Primary">
 	<ul class="navlinks">
 		<li>
-			<a href="/" class="navlink" aria-current="page">Home</a>
+			<a href="/" class="navlink" {{ if .IsCurrent "/" }}aria-current="page"{{ end }}>Home</a>
 		</li>
 		<li>
-			<a href="/about" class="navlink">About</a>
+			<a href="/work" class="navlink" {{ if .IsCurrent "/work" }}aria-current="page"{{ end }}>Work</a>
+		</li>
+		<li>
+			<a href="/about" class="navlink" {{ if .IsCurrent "/about" }}aria-current="page"{{ end }}>About</a>
 		</li>
 	</ul>
 </nav>

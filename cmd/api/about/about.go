@@ -28,6 +28,15 @@ type Proof struct {
 }
 
 // Org is a program worth naming rather than leaving as an unlabeled logo.
+//
+// DISCLOSURE NOTE: The Last Mile and The Next Chapter are named here, with
+// blurbs describing education inside correctional facilities and reentry
+// apprenticeships, and The Last Mile also appears in EducationList. Together
+// these disclose an incarceration history independently of the Story
+// paragraph — so trimming Story alone changes the wording without changing
+// what the page reveals. Whether to disclose is a single decision that has to
+// be applied to Story, Orgs, and EducationList at once, and it is Hunter's
+// call, not a copy edit.
 type Org struct {
 	Name  string
 	Href  string
@@ -180,22 +189,33 @@ func getOrgs() []Org {
 
 func GetAbout() About {
 	return About{
-		Positioning: "I build the data infrastructure other systems run on.",
-		Focus: `Ingestion pipelines, the APIs that serve them, and the deployment and
-observability around both. Go and Python, Postgres, Docker. Working remote with teams
+		// REVIEW: this positioning was rewritten when the market-data platform
+		// was abandoned. The previous line — "I build the data infrastructure
+		// other systems run on" — was written to be carried by that project,
+		// and with it gone nothing on the site supported the claim. This
+		// version is backed by the two projects on /work: one where the whole
+		// machine is mine, one commissioned by a state supreme court and still
+		// serving. Check it still sounds like you.
+		Positioning: "I build production systems and run the machines they live on.",
+		Focus: `Go and TypeScript, Postgres and SQLite, Docker and Linux. From the schema
+through the service to the reverse proxy and the pipeline that ships it — I would rather
+own the whole path than hand half of it to someone else. Working remote with teams
 anywhere in the US.`,
 		Proof: getProof(),
-		Building: `Currently building a self-hosted market data platform — a Go service
-ingesting federal economic data into Postgres and serving it over a documented API, with
-migrations, rate limiting, and source-licensing constraints enforced at the query layer.
-It runs at effectively zero cost on a single droplet.`,
-		// NOTE: this paragraph is a starting draft. It is the most personal
-		// thing on the site and should be rewritten in Hunter's own words
-		// before this page goes in front of anyone.
-		Story: `I came into this field through The Last Mile and The Next Chapter, then
-Qwasar and Hack Reactor. That route selects hard for the part of engineering that is
-mostly persistence — reading unfamiliar systems until they make sense, and staying with a
-problem after the interesting part is over. Most of what I do now is that.`,
+		Building: `Building and operating production systems for local businesses —
+currently a marketing site and inventory system for a shed builder. Server-rendered Go,
+pure-Go SQLite, htmx; one static binary, four direct dependencies, no JavaScript
+toolchain. It runs on a DigitalOcean droplet I administer, behind nginx and certbot, with
+CI gating format, vet, tests, a smoke run, and govulncheck before an image is published.
+It has a real customer, which is the part that makes it interesting.`,
+		// DECISION REQUIRED — see the note in Orgs below. The writing here is
+		// professional; what needs deciding is whether to disclose the route at
+		// all, and that cannot be settled by editing this paragraph alone.
+		Story: `I came into engineering through The Last Mile and The Next Chapter, then
+Qwasar and Hack Reactor. It is not the usual route, and it selected hard for the part of
+the job that turns out to be most of the job: reading unfamiliar systems until they make
+sense, and staying with a problem long after the interesting part is over. That is what I
+still spend most of my time doing.`,
 		Orgs: getOrgs(),
 		Stack: []string{
 			"Go", "Python", "Java", "TypeScript",

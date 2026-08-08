@@ -2,19 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="Hunter Motko — platform and data engineering. Ingestion pipelines, APIs, and the deployment around them. Go, Python, Postgres.">
-  <meta name="keywords" content="platform engineering,data engineering,go,python,postgres,remote">
-  <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
-  <title>Hunter Motko</title>
-  <link rel="stylesheet" href="/css/index.css">
+  {{ template "head" .Meta }}
 </head>
 <body>
-		{{ template "navbar" . }}
-    <main class="about-main">
+    {{ template "navbar" .Meta }}
+    <main class="about-main" id="main">
       <section class="positioning">
         <h1 class="positioning-line">{{ .Positioning }}</h1>
         <p class="focus">{{ .Focus }}</p>
@@ -62,6 +54,7 @@
         </ul>
       </section>
     </main>
+    {{ template "contact" .Meta }}
 </body>
 </html>
 {{ end }}
