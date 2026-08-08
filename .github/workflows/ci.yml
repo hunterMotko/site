@@ -1,0 +1,62 @@
+name: CI
+
+# Every job body is a `make` target. The pipeline deliberately holds no commands
+# of its own: when CI and the developer run different things they drift, and
+# "passes locally, red in CI" becomes routine. `make ci` reproduces this entire
+# file on a laptop.
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  check:
+    name: Format, vet, test, vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The Dockerfile decides which Go builds this project, so CI installs that
+      # one. Parsing it needs no toolchain, hence before setup-go.
+      #
+      # NOT `go-version-file: go.mod`. setup-go treats the `go` directive as an
+      # exact pin rather than the minimum it is, so a directive of 1.25.0 gets
+      # exactly 1.25.0 and govulncheck reports stdlib findings already fixed in
+      # later patches — none of which are present in the shipped image.
+      - id: go
+        run: echo "version=$(make print-go-version)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ steps.go.outputs.version }}
+          # Newest patch of that minor, mirroring how golang:<minor>-alpine
+          # resolves. Without it a cached toolchain reintroduces the above.
+          check-latest: true
+          cache: true
+
+      - run: go version
+
+      - run: make fmt-check
+      - run: make vet
+      - run: make test
+      - run: make vuln
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Builds the image but does not push. The runtime image is what actually
+      # runs in production, and a Dockerfile that stops building is the kind of
+      # breakage that otherwise surfaces at deploy time on a Friday.
+      - run: docker build -t site:ci .
