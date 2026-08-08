@@ -2,5 +2,20 @@
 tmp/
 air.toml
 .DS_Store
+local/
+db.sqlite
 
-*.md
+# Build output. `make build` writes ./app; it is 13MB of compiled Go and has
+# no business in a repo people are invited to read as a work sample.
+#
+# Anchored with a leading slash. An unanchored `app` matches a file OR directory
+# of that name at ANY depth, which silently excluded the entire internal/app/
+# tree — embedded templates, assets, and all — from a repo that still built
+# perfectly on the machine where the files existed.
+/app
+/repos.txt
+
+# The résumé is served from the droplet filesystem, not from git. This repo is
+# public, and a committed PDF keeps every draft — phone number and address
+# included — in history permanently.
+*.pdf
