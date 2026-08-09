@@ -139,7 +139,7 @@ func (s *Server) Home(c echo.Context) error {
 		About: about.GetAbout(),
 		Meta: s.newMeta(
 			"Hunter Motko — Platform & Backend Engineer",
-			"I build production systems and run the machines they live on. Go, TypeScript, Postgres, Docker, Linux. Remote, US teams.",
+			"I build production systems and run the machines they live on. Go, C, TypeScript, Postgres, Docker, Linux. Remote, or hybrid in northern Michigan.",
 			"/",
 		),
 	})

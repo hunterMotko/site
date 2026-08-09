@@ -56,9 +56,16 @@ func TestPagesRender(t *testing.T) {
 				"Prebuilt Sheds LLC",
 				"Illinois Public Defender Statistics",
 				"ilpublicdefenderstats.org",
-				// The systems lane must survive on the page, not just in the data.
+				// The bench lane must survive on the page, not just in the data.
 				"csvq",
-				"Unix primitives, reimplemented",
+				"Unix primitives in C",
+				// Year and provenance are the whole reason the tier exists — an
+				// undated list cannot show a trajectory, and an unlabelled one
+				// lets a reimplementation read as original work. If the template
+				// stops rendering them the section quietly loses its point, so
+				// assert on the rendered meta line rather than on the data.
+				"C · 2026 · original",
+				"C · 2024 — 2026 · from spec",
 			},
 		},
 		{

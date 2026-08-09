@@ -7,12 +7,33 @@
 // a running site in five seconds and cannot check a repo in five minutes — and
 // the engineering decisions come before the stack list.
 //
-// Deliberately absent: coursework. Boot.dev projects (gator, pokedex, chirpy,
-// notely, bookbot, static_site_gen, page-crawler, and the rest) exist in
+// Evidence is tiered, and the tiers are about provenance rather than quality.
+// A CaseStudy ran in production for a client. A SystemsProject is written up at
+// the same depth but had no client. A BenchProject is small and listed in a
+// group. Keeping "somebody paid for this" separate from "this was built
+// seriously" is the whole point: collapsing them would either inflate the
+// unpaid work or bury it.
+//
+// Deliberately absent: guided coursework. Boot.dev projects (gator, pokedex,
+// chirpy, notely, bookbot, static_site_gen, page-crawler, and the rest) exist in
 // thousands of byte-identical copies on GitHub, and reviewers who recognise
-// them read them as curriculum, not work. Listing them would not add a third
-// data point; it would dilute the two real ones.
+// them read them as curriculum, not work. Note this is not a rule against
+// exercises — several bench projects are implementations written from a
+// published specification, which is a different thing and is labelled as such.
+// The distinction is whether the shape of the solution was handed to you.
 package work
+
+// Kind records how a bench project came about. Rendered on the page rather than
+// left for the reader to infer: someone who recognises my_ls as a classic
+// exercise and finds it presented as original work discounts everything else on
+// the page, and the label costs nothing that inference was not going to take
+// anyway.
+type Kind string
+
+const (
+	FromSpec Kind = "from spec"
+	Original Kind = "original"
+)
 
 // Decision is one engineering choice and the reasoning behind it. These are the
 // payload of a case study — a senior reviewer skims the stack and reads these,
@@ -23,9 +44,9 @@ type Decision struct {
 	Body  string
 }
 
-// CaseStudy is a project written up in full. Live and Repo are optional; the
-// template omits any link whose URL is empty, so an unpublished project never
-// renders a dead anchor.
+// CaseStudy is a project written up in full, for a client. Live and Repo are
+// optional; the template omits any link whose URL is empty, so an unpublished
+// project never renders a dead anchor.
 type CaseStudy struct {
 	Name    string
 	Tagline string
@@ -47,13 +68,42 @@ type CaseStudy struct {
 	Stack     []string
 }
 
-// SystemsProject is a smaller piece of evidence for the second lane: work below
-// the framework. These render as a compact group rather than as cards, because
-// individually they are modest and collectively they make a point.
+// SystemsProject is a full writeup — the same depth as a case study, decisions
+// and caveat included — for work that had no client. It carries no Client field
+// because that is precisely what distinguishes it, and a "Client: none" row
+// would draw the eye to an absence rather than to the work.
+//
+// The tier is defined and rendered but currently empty: the section does not
+// appear until there is something in it, because a visibly waiting slot
+// advertises the gap rather than the work.
 type SystemsProject struct {
+	Name    string
+	Tagline string
+	Role    string
+	Period  string
+	Live    string
+	Repo    string
+	Summary []string
+	Caveat  string
+
+	Decisions []Decision
+	Stack     []string
+}
+
+// BenchProject is small, self-directed work: listed as a group rather than
+// written up, because individually they are modest and collectively they show
+// something a case study cannot — that the building never stopped, and which
+// direction it has been moving.
+//
+// Year is what makes the group work. Without it the list reads as one undated
+// pile, and a pile cannot show a trajectory; with it the same entries show C in
+// 2026 sitting above Go in 2025, which is the actual claim.
+type BenchProject struct {
 	Name  string
 	Repo  string
 	Lang  string
+	Year  string
+	Kind  Kind
 	Blurb string
 }
 
@@ -62,6 +112,8 @@ type Work struct {
 	CaseStudies  []CaseStudy
 	SystemsIntro string
 	Systems      []SystemsProject
+	BenchIntro   string
+	Bench        []BenchProject
 	Closing      string
 }
 
@@ -190,31 +242,58 @@ maps are heavy by default, and "feels fine on my laptop" is not a finding.`,
 	}
 }
 
-func getSystems() []SystemsProject {
-	return []SystemsProject{
+// getBench returns bench projects newest first. The ordering is the argument:
+// read top to bottom it shows C in 2026 above Go in 2025, which is the
+// trajectory. Sorted any other way it is a list of repositories.
+func getBench() []BenchProject {
+	return []BenchProject{
+		{
+			Name:  "my_blockchain",
+			Repo:  "https://github.com/hunterMotko/my_blockchain",
+			Lang:  "C",
+			Year:  "2026",
+			Kind:  Original,
+			Blurb: "A command REPL over a linked-list block store in C, with file-backed persistence and an explicit synced/unsynced state.",
+		},
+		{
+			Name:  "Unix primitives in C",
+			Repo:  "https://github.com/hunterMotko?tab=repositories&q=my_",
+			Lang:  "C",
+			Year:  "2024 — 2026",
+			Kind:  FromSpec,
+			Blurb: "ls, tar, and printf implemented against the specification rather than wrapped — argument parsing, flags, and edge cases included.",
+		},
 		{
 			Name:  "csvq",
 			Repo:  "https://github.com/hunterMotko/csvq",
 			Lang:  "Go",
+			Year:  "2025",
+			Kind:  Original,
 			Blurb: "A jq-equivalent for CSV: a small query language with its own parser, reading from stdin or a file.",
-		},
-		{
-			Name:  "Unix primitives, reimplemented",
-			Repo:  "https://github.com/hunterMotko?tab=repositories&q=my_",
-			Lang:  "C, Ruby",
-			Blurb: "tar, ls, printf, and a working subset of SQLite, written from the specification rather than wrapped.",
 		},
 		{
 			Name:  "go_networking",
 			Repo:  "https://github.com/hunterMotko/go_networking",
 			Lang:  "Go",
+			Year:  "2025",
+			Kind:  Original,
 			Blurb: "Hand-rolled TCP, UDP, TLS, HTTP, and unix-socket servers — the layer most web work sits on top of without looking at.",
 		},
 		{
 			Name:  "bdg",
 			Repo:  "https://github.com/hunterMotko/bdg",
 			Lang:  "Go",
+			Year:  "2025",
+			Kind:  Original,
 			Blurb: "A terminal budgeting tool, built because the alternatives all wanted a bank login.",
+		},
+		{
+			Name:  "my_sqlite",
+			Repo:  "https://github.com/hunterMotko/my_sqlite",
+			Lang:  "Ruby",
+			Year:  "2022",
+			Kind:  FromSpec,
+			Blurb: "A working subset of SQLite — parser, storage, and query execution — written to find out what the file format is actually doing.",
 		},
 	}
 }
@@ -224,11 +303,19 @@ func GetWork() Work {
 		Intro: `Two projects in production, and the smaller work underneath them. Both
 of the first two are running right now and one of them you can open in a new
 tab, which is the only portfolio claim that verifies itself.`,
-		SystemsIntro: `Below the framework. These are small on purpose — they exist because
-the fastest way to stop guessing about a layer is to implement it.`,
 		CaseStudies: getCaseStudies(),
-		Systems:     getSystems(),
-		Closing: `Currently open to remote platform, backend, and data engineering work
-with teams anywhere in the US.`,
+
+		// Empty by design — see the note on SystemsProject. The section renders
+		// only when there is something in it.
+		SystemsIntro: `Built to the same standard, without a client.`,
+		Systems:      nil,
+
+		BenchIntro: `Small on purpose. They exist because the fastest way to stop
+guessing about a layer is to implement it, and because I have never stopped
+building things for the sake of building them. Newest first.`,
+		Bench: getBench(),
+
+		Closing: `Currently open to remote platform, backend, and systems work, or
+hybrid in northern Michigan.`,
 	}
 }

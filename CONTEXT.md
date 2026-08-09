@@ -25,10 +25,19 @@ on `/about`. Distinct from a case study: a proof block asserts an outcome in one
 or two sentences, where a case study shows the work.
 _Avoid_: achievement, bullet, highlight
 
+**Current work**:
+The paragraph naming what Hunter is building now and where the work is heading.
+The only place on the site permitted to state a direction that no artifact yet
+backs; every other term here asserts something that has already shipped. A
+direction stated anywhere else is a claim, and claims need evidence.
+_Avoid_: goals, interests, what I'm learning
+
 **Case study**:
 A full write-up of one project on `/work` — client, role, period, links,
 summary, decisions, stack. Reserved for work that ran in production for someone
-other than Hunter.
+other than Hunter. The client is not a detail of the tier, it *is* the tier: a
+stranger cannot verify craft from a repository, but they can verify that
+somebody paid for it and it is still running.
 _Avoid_: project, portfolio piece, showcase
 
 **Decision**:
@@ -43,9 +52,19 @@ reviewer would otherwise find and wonder why it went unmentioned.
 _Avoid_: weakness, disclaimer, caveat emptor
 
 **Systems project**:
-A smaller piece of evidence for work below the framework layer. Rendered as a
-group rather than individually, because the point they make is collective.
-_Avoid_: side project, experiment, toy
+Work written up at the same depth as a case study — summary, decisions, caveat —
+that had no client. Production-grade in construction and intent, self-directed
+in origin. The tier exists because "had a customer" and "was built seriously"
+are separate facts, and collapsing them either inflates unpaid work or buries
+it.
+_Avoid_: personal project, side project, portfolio piece
+
+**Bench project**:
+Small, self-directed work, listed as a group rather than written up. Carries the
+year it was built and whether it was reimplemented from a specification or
+original. On the bench, not in production — the name says so, which is what lets
+the group sit on the page without either apologising or overclaiming.
+_Avoid_: side project, experiment, toy, hobby project
 
 **Story**:
 The account of how Hunter entered engineering. Deliberately separate from proof

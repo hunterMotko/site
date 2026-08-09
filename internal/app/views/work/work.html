@@ -55,15 +55,65 @@
     </article>
     {{ end }}
 
+    <!-- Systems projects are full writeups without a client, so they render
+         with the same markup as a case study minus the Client row. The whole
+         section is guarded: while the tier is empty, an empty heading would
+         advertise the gap rather than the work. -->
+    {{ if .Systems }}
     <section class="systems">
       <h2 class="section-title">Systems work</h2>
       <p class="focus">{{ .SystemsIntro }}</p>
-      <ul class="systems-list">
-        {{ range .Systems }}
-        <li class="system">
-          <a class="system-name" target="_blank" rel="noopener" href="{{ .Repo }}">{{ .Name }}</a>
-          <span class="system-lang">{{ .Lang }}</span>
-          <span class="system-blurb">{{ .Blurb }}</span>
+
+      {{ range .Systems }}
+      <article class="case-study">
+        <h3 class="case-name">{{ .Name }}</h3>
+        <p class="case-tagline">{{ .Tagline }}</p>
+
+        <dl class="case-facts">
+          <dt>Role</dt><dd>{{ .Role }}</dd>
+          <dt>Period</dt><dd>{{ .Period }}</dd>
+        </dl>
+
+        <p class="case-links">
+          {{ if .Live }}<a class="cta cta-primary" target="_blank" rel="noopener" href="{{ .Live }}">Visit the live site</a>{{ end }}
+          {{ if .Repo }}<a class="cta" target="_blank" rel="noopener" href="{{ .Repo }}">Read the source</a>{{ end }}
+        </p>
+
+        {{ range .Summary }}<p class="case-summary">{{ . }}</p>{{ end }}
+
+        {{ if .Decisions }}
+        <h4 class="case-subhead">Decisions worth explaining</h4>
+        <ul class="decisions">
+          {{ range .Decisions }}
+          <li class="decision">
+            <h5 class="decision-title">{{ .Title }}</h5>
+            <p class="decision-body">{{ .Body }}</p>
+          </li>
+          {{ end }}
+        </ul>
+        {{ end }}
+
+        {{ if .Caveat }}
+        <p class="case-caveat"><strong>Worth stating plainly.</strong> {{ .Caveat }}</p>
+        {{ end }}
+
+        <ul class="stack-list">
+          {{ range .Stack }}<li>{{ . }}</li>{{ end }}
+        </ul>
+      </article>
+      {{ end }}
+    </section>
+    {{ end }}
+
+    <section class="bench">
+      <h2 class="section-title">On the bench</h2>
+      <p class="focus">{{ .BenchIntro }}</p>
+      <ul class="bench-list">
+        {{ range .Bench }}
+        <li class="bench-item">
+          <a class="bench-name" target="_blank" rel="noopener" href="{{ .Repo }}">{{ .Name }}</a>
+          <span class="bench-meta">{{ .Lang }} · {{ .Year }} · {{ .Kind }}</span>
+          <span class="bench-blurb">{{ .Blurb }}</span>
         </li>
         {{ end }}
       </ul>

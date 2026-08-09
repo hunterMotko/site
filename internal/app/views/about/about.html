@@ -23,7 +23,7 @@
 
       <section class="building">
         <h2 class="section-title">What I'm building now</h2>
-        <p>{{ .Building }}</p>
+        {{ range .Building }}<p>{{ . }}</p>{{ end }}
       </section>
 
       <section class="story">

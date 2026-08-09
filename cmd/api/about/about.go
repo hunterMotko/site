@@ -52,9 +52,13 @@ type About struct {
 	Positioning string
 	Focus       string
 	Proof       []Proof
-	Building    string
-	Story       string
-	Orgs        []Org
+	// Building is the only field on the site allowed to state a direction that
+	// no artifact yet backs — everything else asserts something already
+	// shipped. One entry per paragraph: HTML collapses newlines, so a
+	// multi-paragraph string would render as one undifferentiated block.
+	Building []string
+	Story    string
+	Orgs     []Org
 	// Stack sits last, as a footnote. A technology list is a keyword filter
 	// that screens people out more often than it draws them in.
 	Stack          []string
@@ -98,10 +102,12 @@ func getExperience() []Experience {
 			LocationType: "Remote",
 			Start:        "February 2023",
 			End:          "April 2024",
+			// Reordered so the storage work leads. The 50% number was earned in
+			// Postgres, and the original ordering credited it to the dashboard.
 			Description: []string{
-				"Engineered and deployed high-performance data visualization dashboards using React, TypeScript, and Next.js, resulting in a 50% reduction in page load times and a 40% increase in user case handling speed.",
-				"Spearheaded the full software delivery lifecycle, implementing robust GitHub CI/CD pipelines and Dockerized deployments to establish a scalable, efficient infrastructure on Digital Ocean.",
-				"Optimized PostgreSQL database performance through advanced indexing and query tuning, directly contributing to the frontend speed improvements and ensuring data integrity across high-volume transactions.",
+				"Cut page load times by 50% in Postgres rather than in the client — indexing and query tuning against high-volume transactional data. Case handling came out 40% faster off the same work.",
+				"Owned the delivery path end to end: GitHub Actions CI, Dockerised deploys, and the DigitalOcean infrastructure underneath them.",
+				"Built the data-visualisation dashboards the API fed — React, TypeScript, Next.js — against the same schema I was tuning.",
 			},
 		},
 		{
@@ -113,9 +119,8 @@ func getExperience() []Experience {
 			Start:        "June 2022",
 			End:          "December 2022",
 			Description: []string{
-				"Engineered and optimized dynamic subscription workflow services using Java and Apache Tomcat, directly contributing to a 20% increase in user retention rates by enhancing renewal processes.",
-				"Collaborated in an Agile/SCRUM environment with Marketing, Operations, and Billing partners to align technical execution with strategic business goals, ensuring successful, enterprise-grade solution delivery.",
-				"Translated complex technical roadmaps into clear, tangible business value for non-technical stakeholders, facilitating consensus and accelerating the deployment of critical user-facing features.",
+				"Worked on subscription and renewal workflow services in Java on Apache Tomcat. The renewal changes tracked to a 20% improvement in retention.",
+				"Shipped billing-adjacent changes across Marketing, Operations, and Billing without breaking the systems on either side of ours.",
 			},
 		},
 		{
@@ -127,9 +132,9 @@ func getExperience() []Experience {
 			Start:        "September 2021",
 			End:          "March 2022",
 			Description: []string{
-				"Developed a resilient, real-time messaging interface for the admin panel using React, implementing an offline-first architecture to maintain user functionality and queue data for synchronization upon network reconnection.",
-				"Tackled complex data ingestion challenges by engineering processing logic for bulk packet data with polymorphic structures and significant edge cases to ensure data integrity and stability.",
-				"Collaborated closely with backend engineers to establish and enforce strict API standards, resulting in the optimization of system-wide data flow and a significant increase in transactional efficiency.",
+				"Wrote the ingestion path for bulk packet data arriving with polymorphic structure and a long tail of edge cases, without dropping records.",
+				"Built an offline-first messaging interface for the admin panel: writes queued through network loss and reconciled on reconnect.",
+				"Worked with the backend team to pin down API contracts the ingestion code could actually rely on.",
 			},
 		},
 	}
@@ -152,7 +157,8 @@ func getProof() []Proof {
 		},
 		{
 			Claim: "Own the path from commit to running service",
-			Context: "GitHub Actions CI/CD and Dockerized deploys on DigitalOcean. Not handed " +
+			Context: "GitHub Actions CI and Dockerised deploys, and the Linux box " +
+				"underneath them — nginx, TLS renewal, fail2ban, backups. Not handed " +
 				"off to someone else's platform team.",
 		},
 	}
@@ -197,17 +203,28 @@ func GetAbout() About {
 		// machine is mine, one commissioned by a state supreme court and still
 		// serving. Check it still sounds like you.
 		Positioning: "I build production systems and run the machines they live on.",
-		Focus: `Go and TypeScript, Postgres and SQLite, Docker and Linux. From the schema
-through the service to the reverse proxy and the pipeline that ships it — I would rather
-own the whole path than hand half of it to someone else. Working remote with teams
-anywhere in the US.`,
+		Focus: `Go, C, and TypeScript; Postgres and SQLite; Docker and Linux. From the
+schema through the service to the reverse proxy and the pipeline that ships it — I would
+rather own the whole path than hand half of it to someone else. Remote, or hybrid in
+northern Michigan.`,
 		Proof: getProof(),
-		Building: `Building and operating production systems for local businesses —
-currently a marketing site and inventory system for a shed builder. Server-rendered Go,
-pure-Go SQLite, htmx; one static binary, four direct dependencies, no JavaScript
-toolchain. It runs on a DigitalOcean droplet I administer, behind nginx and certbot, with
-CI gating format, vet, tests, a smoke run, and govulncheck before an image is published.
-It has a real customer, which is the part that makes it interesting.`,
+		Building: []string{
+			`Building and operating production systems for local businesses — currently a
+marketing site and inventory system for a shed builder. Server-rendered Go, pure-Go
+SQLite, htmx; one static binary, four direct dependencies, no JavaScript toolchain. It
+runs on a DigitalOcean droplet I administer, behind nginx and certbot, with CI gating
+format, vet, tests, a smoke run, and govulncheck before an image is published. It has a
+real customer, which is the part that makes it interesting.`,
+			// The direction, stated here and nowhere else on the site. Deliberately
+			// unspecific about the branch — firmware, embedded Linux, and controls are
+			// different markets and which one is still open. Naming one now would put a
+			// claim on the page that neither the artifacts nor the geography support,
+			// and would need rewriting the moment it resolves.
+			`Alongside that I have been working further down — C, Linux, and the layers
+underneath the ones I have been shipping on. That is the direction; the projects on the
+work page are what I can point at today, and the bench is where the rest of it is
+happening in the open.`,
+		},
 		// DECISION REQUIRED — see the note in Orgs below. The writing here is
 		// professional; what needs deciding is whether to disclose the route at
 		// all, and that cannot be settled by editing this paragraph alone.
@@ -217,11 +234,16 @@ the job that turns out to be most of the job: reading unfamiliar systems until t
 sense, and staying with a problem long after the interesting part is over. That is what I
 still spend most of my time doing.`,
 		Orgs: getOrgs(),
+		// Trimmed to what is worth being screened *for*. React, Vue, Next.js,
+		// Node, and MongoDB came out: they are real experience, they are already
+		// visible in the case study and the work history, and as keywords they
+		// were the loudest frontend signal on a page arguing the opposite. A
+		// stack list is a filter, and every entry that pulls the wrong way costs
+		// more than it returns.
 		Stack: []string{
-			"Go", "Python", "Java", "TypeScript",
-			"Postgres", "SQLite", "MongoDB",
-			"Docker", "GitHub Actions", "DigitalOcean",
-			"React", "Vue", "Next.js", "Node",
+			"Go", "C", "Python", "Java", "TypeScript",
+			"Postgres", "SQLite",
+			"Linux", "Docker", "GitHub Actions", "DigitalOcean",
 		},
 		EducationList:  getEducation(),
 		ExperienceList: getExperience(),
