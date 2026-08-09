@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      # nginx terminates TLS on the droplet and proxies to this port, so it is
+      # bound to loopback rather than 0.0.0.0 — otherwise the container is
+      # reachable directly on the public IP, bypassing TLS entirely.
+      - "127.0.0.1:8080:8080"
+
+    # Configuration cannot ride along in the image: the runtime stage copies only
+    # the binary, so .env never reaches the container. This file exists only on
+    # the droplet and is gitignored. See .env for the full list of keys.
+    #
+    # Without it SITE_URL is unset, which silently drops the canonical tag and
+    # every Open Graph tag — the site still serves, but shared links stop
+    # unfurling, which is the whole reason those tags exist.
+    env_file:
+      - .env.production
+
+    volumes:
+      # The metrics database. Without this the SQLite file lives in the
+      # container's writable layer and `docker compose up --build` destroys it,
+      # so pageview history would silently reset on every deploy.
+      - metrics:/data
+      # The résumé is deliberately not in git (a public repo would retain every
+      # draft forever) and therefore not in the image either. Mounted read-only:
+      # the app serves it and has no business writing to it.
+      #
+      # Path is relative to this file, so `docker compose up` works the same on
+      # a laptop as on the droplet — drop resume.pdf beside compose.yaml. It
+      # stays out of git via the *.pdf rule in .gitignore.
+      #
+      # If resume.pdf is absent, Docker creates an empty directory here rather
+      # than failing. The server checks for a non-empty regular file and simply
+      # does not register the route, so the missing file costs you the download
+      # link and nothing else.
+      - ./resume.pdf:/srv/resume.pdf:ro
+
+volumes:
+  metrics:

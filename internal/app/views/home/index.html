@@ -2,20 +2,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="hunter motko profile page">
-  <meta name="keywords" content="hunter,motko,profile">
-  <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
-  <title>Hunter Motko</title>
-  <link rel="stylesheet" href="/css/index.css">
+  {{ template "head" .Meta }}
 </head>
 <body>
+  {{ template "navbar" .Meta }}
   <div class="container">
-		{{ template "navbar" . }}
     {{ template "main" . }}
   </div>
+  {{ template "contact" .Meta }}
 </body>
 </html>
 {{ end }}

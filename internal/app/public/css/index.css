@@ -24,12 +24,39 @@ body {
 	font-family: 'Monaco', 'Courier New', monospace;
 }
 
-p {
-	text-indent: 2rem;
+/* Text-indent was applied globally to every <p>. It is a print convention for
+   dense continuous prose and reads as a rendering bug in short web paragraphs,
+   so indentation is now opt-in rather than the default. */
+
+/* min-height, not height: a fixed 100% clips any page whose content exceeds the
+   viewport instead of letting the document scroll. */
+.container {
+	min-height: 100%;
 }
 
-.container {
-	height: 100%;
+/* === Accessibility === */
+
+/* Visible only once focused, so a keyboard user can jump past the nav rather
+   than tabbing through it on every page. */
+.skip-link {
+	position: absolute;
+	left: -9999px;
+	top: 0;
+	background: var(--color-text-primary);
+	color: var(--color-bg-darker);
+	padding: 10px 16px;
+	z-index: 10;
+}
+
+.skip-link:focus {
+	left: 0;
+}
+
+/* The browser default outline disappears against a dark background. */
+a:focus-visible,
+button:focus-visible {
+	outline: 2px solid #93c5fd;
+	outline-offset: 3px;
 }
 
 /* === Navbar === */
@@ -56,22 +83,35 @@ p {
 }
 
 /* === Home Page === */
+
+/* min-height rather than height. The home page wants to sit centred in a tall
+   window, but a fixed 90% clips instead of centring the moment the content is
+   taller than the viewport — a short laptop window, or any phone in landscape —
+   and the overflow then collides with whatever follows, exactly as it did on
+   /about. min-height centres when there is room and grows when there is not. */
 .main {
-	height: 90%;
+	min-height: 85vh;
 	margin: auto 1em;
+	padding: 1rem 0;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-wrap: wrap;
+	gap: 1.5rem;
 }
 
 .headshot {
 	border-radius: 10px;
 }
 
+/* Capping the measure does two things: it stops the intro prose running the full
+   window width on a desktop monitor, where a line becomes hard to track back to
+   the next one; and because the text block no longer claims the whole row, the
+   headshot sits beside it instead of being wrapped above it. */
 .inner-container {
 	margin: 1rem;
 	padding: 1rem;
+	max-width: 62ch;
 }
 
 .name-title {
@@ -82,11 +122,20 @@ p {
 	font-size: 28px;
 }
 
+.position-sub {
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+	margin: 0.5rem 0;
+	text-indent: 0;
+}
+
+/* Fixed gap rather than `width: 50%` with space-between, which spaced the three
+   icons by a fraction of the container — so they drifted further apart the wider
+   the window got, and read as three unrelated elements rather than one group. */
 .socials {
-	width: 50%;
 	display: flex;
+	gap: 1.5rem;
 	margin: 1rem 0;
-	justify-content: space-between;
 	align-items: center;
 }
 
@@ -103,36 +152,146 @@ p {
 }
 
 /* === About Page === */
+
+/* Normal block flow, deliberately.
+
+   This was `height: 100%` on a centered flex container. Since html and body are
+   also 100%, that pinned the element to exactly one viewport regardless of how
+   much content it held — so the about page (many screens tall) overflowed its
+   own box, while the contact footer, being the next sibling in normal flow, got
+   laid out starting at the one-viewport mark and rendered on top of the
+   overflowing text. `align-items: center` compounded it by pushing the overflow
+   out of the top edge as well.
+
+   A document's height is its content. max-width caps the measure instead. */
 .about-main {
-	height: 100%;
-	width: 80%;
 	margin: 1em auto;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-wrap: wrap;
+	max-width: 78ch;
+	padding: 0 1rem;
+	width: 100%;
 }
 
-@media (max-width: 400px) {
-	.about-main {
-		width: 100%;
-		height: 100%;
-		margin: 1em 0;
-		padding: 0 5px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-wrap: wrap;
-	}
+.about-main>section {
+	width: 100%;
 }
 
-.summary {
+.section-title {
+	font-size: 22px;
+	margin: 5px 0;
+	color: var(--color-text-secondary);
+}
+
+/* --- Positioning --- */
+.positioning {
+	margin: 1.5rem 0;
+}
+
+.positioning-line {
+	font-size: 30px;
+	line-height: 1.3;
+	margin: 5px 0;
+}
+
+.focus {
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+	max-width: 65ch;
+}
+
+/* --- Proof --- */
+.proof {
+	margin: 1.5rem 0;
+	border-top: 1px solid var(--color-border);
+	border-bottom: 1px solid var(--color-border);
+	padding: 1rem 0;
+}
+
+.proof-block {
 	margin: 1rem 0;
 }
 
-.summary-title {
-	font-size: 32px;
+.proof-claim {
+	font-size: 19px;
 	margin: 5px 0;
+}
+
+.proof-context {
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+	max-width: 70ch;
+}
+
+/* --- Building / Story --- */
+.building,
+.story {
+	margin: 1.5rem 0;
+}
+
+.building p,
+.story p {
+	line-height: 1.6;
+	max-width: 70ch;
+}
+
+.orgs {
+	list-style: none;
+	margin: 1rem 0;
+	padding: 0;
+}
+
+.org {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin: 0.75rem 0;
+}
+
+.org-logo {
+	object-fit: contain;
+}
+
+.org-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.org-name {
+	color: var(--color-text-primary);
+	text-decoration: none;
+}
+
+.org-name:hover {
+	text-decoration: underline;
+}
+
+.org-blurb {
+	color: var(--color-text-secondary);
+	font-size: 14px;
+}
+
+/* --- Stack (footnote) --- */
+.stack {
+	margin: 1.5rem 0 2.5rem;
+	border-top: 1px solid var(--color-border);
+	padding-top: 1rem;
+}
+
+.stack-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	list-style: none;
+	padding: 0;
+	margin: 0.5rem 0;
+}
+
+.stack-list li {
+	background-color: var(--color-bg-dark);
+	border: 1px solid var(--color-border);
+	border-radius: 4px;
+	color: var(--color-text-secondary);
+	font-size: 14px;
+	padding: 3px 9px;
 }
 
 .experience {
@@ -161,4 +320,223 @@ p {
 
 .ed-block {
 	margin: 10px 0;
+}
+
+/* === Calls to action === */
+.cta-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin: 1.25rem 0;
+}
+
+.cta {
+	border: 1px solid var(--color-border);
+	border-radius: 4px;
+	color: var(--color-text-primary);
+	display: inline-block;
+	padding: 9px 16px;
+	text-decoration: none;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.cta:hover {
+	background-color: var(--color-bg-dark);
+	border-color: var(--color-text-secondary);
+}
+
+.cta-primary {
+	background-color: var(--color-bg-dark);
+	border-color: var(--color-text-secondary);
+}
+
+.cta-primary:hover {
+	background-color: var(--color-border);
+}
+
+.home-proof {
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+	margin: 0.75rem 0;
+	max-width: 60ch;
+}
+
+/* === Work page === */
+.work-main {
+	margin: 1em auto;
+	max-width: 78ch;
+	padding: 0 1rem;
+	width: 100%;
+}
+
+.case-study {
+	border-top: 1px solid var(--color-border);
+	margin: 2.5rem 0;
+	padding-top: 1.5rem;
+}
+
+.case-name {
+	font-size: 26px;
+	margin: 0 0 0.25rem;
+}
+
+.case-tagline {
+	color: var(--color-text-secondary);
+	line-height: 1.5;
+	margin: 0 0 1rem;
+}
+
+/* Definition list rather than prose: these are lookups, and a reader scanning
+   for "who was the client" should not have to read a sentence to find it. */
+.case-facts {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 0.35rem 1rem;
+	margin: 1rem 0;
+}
+
+.case-facts dt {
+	color: var(--color-text-secondary);
+	font-size: 14px;
+}
+
+.case-facts dd {
+	margin: 0;
+}
+
+.case-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin: 1.25rem 0;
+}
+
+.case-summary {
+	line-height: 1.65;
+	margin: 0.85rem 0;
+}
+
+.case-subhead {
+	color: var(--color-text-secondary);
+	font-size: 18px;
+	margin: 1.75rem 0 0.75rem;
+}
+
+.decisions {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.decision {
+	border-left: 2px solid var(--color-border);
+	margin: 1.1rem 0;
+	padding-left: 1rem;
+}
+
+.decision-title {
+	font-size: 16px;
+	margin: 0 0 0.35rem;
+}
+
+.decision-body {
+	color: var(--color-text-secondary);
+	line-height: 1.65;
+	margin: 0;
+}
+
+.case-caveat {
+	background-color: var(--color-bg-dark);
+	border-left: 2px solid var(--color-text-secondary);
+	line-height: 1.65;
+	margin: 1.75rem 0;
+	padding: 1rem;
+}
+
+/* === Systems and bench sections === */
+.systems,
+.bench {
+	border-top: 1px solid var(--color-border);
+	margin: 2.5rem 0;
+	padding-top: 1.5rem;
+}
+
+.bench-list {
+	list-style: none;
+	margin: 1.25rem 0;
+	padding: 0;
+}
+
+.bench-item {
+	border-bottom: 1px solid var(--color-border);
+	display: grid;
+	grid-template-columns: max-content max-content;
+	gap: 0.2rem 0.75rem;
+	padding: 0.85rem 0;
+}
+
+.bench-name {
+	color: var(--color-text-primary);
+	text-decoration: none;
+}
+
+.bench-name:hover {
+	text-decoration: underline;
+}
+
+/* Language, year, and provenance on one line. The year is the load-bearing
+   part — it is what turns the list from a pile of repositories into a
+   trajectory — so it sits inline with the name rather than below the blurb. */
+.bench-meta {
+	color: var(--color-text-secondary);
+	font-size: 13px;
+}
+
+.bench-blurb {
+	color: var(--color-text-secondary);
+	grid-column: 1 / -1;
+	line-height: 1.55;
+}
+
+.closing {
+	margin: 2rem 0;
+}
+
+/* === Contact === */
+.contact {
+	border-top: 1px solid var(--color-border);
+	margin: 2.5rem auto 0;
+	max-width: 78ch;
+	padding: 1.5rem 1rem 3rem;
+}
+
+.contact-ask {
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+	margin: 0.5rem 0 1rem;
+	max-width: 60ch;
+}
+
+.contact-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.25rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.contact-links a {
+	color: var(--color-text-primary);
+}
+
+@media (max-width: 600px) {
+	.case-facts {
+		grid-template-columns: 1fr;
+		gap: 0 0;
+	}
+
+	.case-facts dd {
+		margin-bottom: 0.6rem;
+	}
 }

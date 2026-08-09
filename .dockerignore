@@ -1,0 +1,34 @@
+# The build context is sent to the Docker daemon in full and `COPY . .` pulls it
+# into the build stage. None of the following belongs in either.
+
+# Private planning and career-strategy notes. These never reach the runtime
+# image (only the binary is copied out), but keeping them out of the build stage
+# means they are not one Dockerfile edit away from shipping.
+local/
+
+# Secrets and local configuration. Production config comes from
+# .env.production on the droplet, via compose's env_file.
+.env
+.env.*
+
+# Version control history — large, and the build needs none of it.
+.git
+.gitignore
+
+# Build output. `app` alone is ~14MB of compiled Go being uploaded for nothing.
+app
+tmp/
+
+# Local databases; the real one lives on a named volume.
+db.sqlite
+
+# The résumé is bind-mounted from the droplet, not baked into the image.
+*.pdf
+
+# Docs and agent configuration are not inputs to the build.
+docs/
+CLAUDE.md
+CONTEXT.md
+README.md
+.github/
+.scratch/
