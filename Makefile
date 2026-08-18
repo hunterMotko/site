@@ -44,12 +44,17 @@ print-go-version:
 	@grep -m1 '^FROM golang:' Dockerfile | sed 's/.*golang:\([0-9.]*\).*/\1/'
 
 ## deploy: run ON THE DROPLET, from the repo checkout. Recorded here rather than
-## remembered — see docs/adr/0003-droplet-pulls-and-builds.md for why the box
-## builds instead of pulling a published image.
+## remembered — see docs/deploy.md for the full procedure and
+## docs/adr/0003-droplet-pulls-and-builds.md for why the box builds instead of
+## pulling a published image.
 ##
 ## Requires, on the droplet and not in git:
-##   .env.production        config; same keys as .env
-##   /srv/site/resume.pdf   bind-mounted read-only by compose
+##   .env.production            APP_ENV, SITE_URL, STATS_TOKEN — the rest is set
+##                              by compose.yaml, which owns the values coupled
+##                              to it
+##   /var/www/app/resume.pdf    bind-mounted read-only by compose. That is the
+##                              checkout path nginx and the rest of the tooling
+##                              on the box already expect.
 deploy:
 	@test -f .env.production || { \
 		echo "missing .env.production — see .env for the keys"; exit 1; }
@@ -58,13 +63,23 @@ deploy:
 	docker compose ps
 
 ## deploy-check: confirm the running site is actually healthy after a deploy.
-## `docker compose ps` reports the container is up, which is not the same thing.
+## `docker compose ps` reports the container is up, which is not the same thing —
+## compose.yaml now carries a healthcheck for the same reason.
 deploy-check:
-	@curl -fsS -o /dev/null -w 'GET  / -> %{http_code}\n' http://127.0.0.1:8080/
-	@curl -fsS -o /dev/null -w 'HEAD / -> %{http_code}\n' -I http://127.0.0.1:8080/
-	@curl -fsS http://127.0.0.1:8080/robots.txt | grep -q 'Sitemap: https://' \
+	@curl -fsS -o /dev/null -w 'GET  /            -> %{http_code}\n' http://127.0.0.1:8080/
+	@curl -fsS -o /dev/null -w 'HEAD /            -> %{http_code}\n' -I http://127.0.0.1:8080/
+	@curl -fsS -o /dev/null -w 'GET  /favicon.ico -> %{http_code}\n' http://127.0.0.1:8080/favicon.ico
+	@curl -fsS -o /dev/null -w 'GET  /work        -> %{http_code}\n' http://127.0.0.1:8080/work
+	@curl -fsS -o /dev/null -w 'GET  /about       -> %{http_code}\n' http://127.0.0.1:8080/about
+	@## https? rather than https, so this target means the same thing against a
+	@## local container as it does on the droplet. What it is testing is that
+	@## SITE_URL is set at all; the scheme is the deployment's business.
+	@curl -fsS http://127.0.0.1:8080/robots.txt | grep -qE 'Sitemap: https?://' \
 		&& echo 'robots.txt carries an absolute sitemap URL (SITE_URL is set)' \
 		|| { echo 'SITE_URL is NOT set — canonical and og: tags are missing'; exit 1; }
+	@## Metrics and the résumé both degrade to "off" by design, so nothing fails
+	@## loudly when their paths are wrong. Startup says which happened.
+	@docker compose logs 2>/dev/null | grep -E 'metrics:|/resume.pdf:' | tail -2 || true
 
 clean:
 	rm -f $(BINARY_NAME)

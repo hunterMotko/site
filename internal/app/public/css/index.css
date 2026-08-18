@@ -102,6 +102,8 @@ button:focus-visible {
 
 .headshot {
 	border-radius: 10px;
+	height: auto;
+	max-width: 100%;
 }
 
 /* Capping the measure does two things: it stops the intro prose running the full

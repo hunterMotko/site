@@ -72,7 +72,7 @@ func page(e *echo.Echo, path string, h echo.HandlerFunc) {
 func (s *Server) RegisterRoutes() http.Handler {
 	e := echo.New()
 	e.HideBanner = true
-	e.Use(middleware.Logger())
+	e.Use(requestLogger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Secure())
 	e.Use(middleware.Gzip())
@@ -88,6 +88,18 @@ func (s *Server) RegisterRoutes() http.Handler {
 	if err != nil {
 		panic("embedded public assets missing: " + err.Error())
 	}
+	// The HTML pages point at /images/favicon.svg through <link rel="icon">, but
+	// a client with no HTML in front of it falls back to the well-known path —
+	// /stats returns JSON, robots.txt and sitemap.xml are plain text, and
+	// crawlers and link unfurlers request /favicon.ico directly whatever the
+	// markup says. Left unregistered that is a permanent 404 on the one asset an
+	// unfurler actually uses.
+	//
+	// Serving the existing SVG here rather than adding an .ico keeps this to a
+	// route: fsFile types the response from the file it opened, so the body goes
+	// out as image/svg+xml and the ".ico" is only ever a URL.
+	page(e, "/favicon.ico", echo.StaticFileHandler("images/favicon.svg", pub))
+
 	e.StaticFS("/", pub)
 
 	e.Renderer = newTemplate()

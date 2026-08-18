@@ -390,3 +390,22 @@ func TestStaticAssetsAreEmbedded(t *testing.T) {
 		}
 	}
 }
+
+// TestFaviconIcoIsServed covers the well-known path. Clients with no HTML in
+// front of them — /stats returns JSON, and unfurlers ask directly — never see
+// the <link rel="icon"> and fall back here.
+//
+// The content type is the load-bearing assertion, not the status. middleware.Secure
+// sets X-Content-Type-Options: nosniff, so a browser will not rescue a body typed
+// from the ".ico" in the URL instead of from the .svg actually being served.
+func TestFaviconIcoIsServed(t *testing.T) {
+	h := newTestServer(t)
+
+	rec := get(t, h, "/favicon.ico")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("GET /favicon.ico = %d, want 200", rec.Code)
+	}
+	if got := rec.Header().Get("Content-Type"); !strings.HasPrefix(got, "image/svg+xml") {
+		t.Errorf("Content-Type = %q, want image/svg+xml", got)
+	}
+}

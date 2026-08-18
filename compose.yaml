@@ -10,15 +10,46 @@ services:
       # reachable directly on the public IP, bypassing TLS entirely.
       - "127.0.0.1:8080:8080"
 
-    # Configuration cannot ride along in the image: the runtime stage copies only
-    # the binary, so .env never reaches the container. This file exists only on
-    # the droplet and is gitignored. See .env for the full list of keys.
+    # These three are decided by this file, not by the deployment. Each one names
+    # a port or path defined a few lines below, so the correct value is a
+    # property of the compose file and cannot be known by whoever writes
+    # .env.production.
+    #
+    # They lived in .env.production once, and every one of them was wrong in a
+    # way that started cleanly and served nothing:
+    #   PP=80          bound a port the mapping below does not forward, so the
+    #                  container came up healthy and every request got an empty
+    #                  reply.
+    #   DB_PATH=./db.sqlite   resolved under WORKDIR /app, which the unprivileged
+    #                  user cannot write and which is not the volume — metrics
+    #                  degraded to off, by design and therefore silently.
+    #   RESUME_PATH=./2026_resume.pdf   named a file that exists on the host and
+    #                  not in the image, so the download link never appeared.
+    #
+    # environment takes precedence over env_file, so a stale .env.production
+    # carrying the old keys cannot reintroduce any of it.
+    environment:
+      PP: 8080
+      DB_PATH: /data/site.db
+      RESUME_PATH: /srv/resume.pdf
+
+    # The rest is genuinely per-deployment. Configuration cannot ride along in
+    # the image: the runtime stage copies only the binary, so .env never reaches
+    # the container. This file exists only on the droplet and is gitignored —
+    # see .env for the full list of keys, and docs/deploy.md for the three that
+    # still belong here.
     #
     # Without it SITE_URL is unset, which silently drops the canonical tag and
     # every Open Graph tag — the site still serves, but shared links stop
     # unfurling, which is the whole reason those tags exist.
+    # required: false so a fresh clone can `docker compose up` and get a working
+    # site with metrics off and no SEO tags, which is the app's own behaviour
+    # with nothing configured. Making the file mandatory here bought nothing: the
+    # deploy that actually needs it is `make deploy`, which refuses to run
+    # without it, and that check is the one worth having.
     env_file:
-      - .env.production
+      - path: .env.production
+        required: false
 
     volumes:
       # The metrics database. Without this the SQLite file lives in the
@@ -38,6 +69,23 @@ services:
       # does not register the route, so the missing file costs you the download
       # link and nothing else.
       - ./resume.pdf:/srv/resume.pdf:ro
+
+    # `docker compose ps` reports a container is running, which is not the same
+    # as the site answering — the PP mismatch above produced a container that
+    # stayed up for days while every request got an empty reply. This probes the
+    # port the mapping actually forwards, so that failure shows as unhealthy.
+    #
+    # wget comes from busybox in the alpine runtime; nothing is installed for
+    # this. robots.txt rather than / because it is the cheapest route that still
+    # proves the router and the handler chain are wired.
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/robots.txt"]
+      interval: 30s
+      timeout: 3s
+      # Generous, because the failure this catches is permanent, not slow. A
+      # tight window would only add restart churn to a box that is already fine.
+      start_period: 10s
+      retries: 3
 
 volumes:
   metrics:
